@@ -1,21 +1,22 @@
 class ProductsController < ApplicationController
+  before_action :find_product, only: [:show, :edit, :update, :destroy]
 
   def new
     @product = Product.new
   end
 
   def create
-    product_params = params.require(:product).permit(:name, :description, :price)
     @product = Product.new product_params
     if @product.save
-      render text: "created!"
+      redirect_to product_path(@product), notice: "Product created!"
     else
+      flash[:alert] = "product not created, check errors below"
       render :new
     end
   end
 
   def show
-    @product = Product.find params[:id]
+    @review = Review.new
   end
 
   def index
@@ -23,12 +24,9 @@ class ProductsController < ApplicationController
   end
 
   def edit
-    @product = Product.find params[:id]
   end
 
   def update
-    @product = Product.find params[:id]
-    product_params = params.require(:product).permit(:name, :price, :description)
     if @product.update product_params
       redirect_to product_path(@product)
     else
@@ -37,8 +35,17 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    @product = Product.find params[:id]
     @product.destroy
     redirect_to products_path
+  end
+
+  private
+
+  def product_params
+    params.require(:product).permit(:name, :description, :price)
+  end
+
+  def find_product
+    @product = Product.find params[:id]
   end
 end
