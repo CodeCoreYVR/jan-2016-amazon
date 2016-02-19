@@ -17,5 +17,8 @@
     <%= f.label :price %>
     <%= f.text_field :price %>
   </div>
+  <div>
+    <%= f.collection_check_boxes :department_ids, Department.order(:name), :id, :name%>
+  </div>
   <%= f.submit %>
 <% end %>
